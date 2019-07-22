@@ -1,7 +1,10 @@
-package com.zy.teststorage;
+package com.zy.teststorage.helper;
 
 import android.text.TextUtils;
 import android.util.Log;
+
+import com.zy.teststorage.model.AppStorageInfo;
+import com.zy.teststorage.model.PathInfo;
 
 import java.io.BufferedReader;
 import java.io.File;

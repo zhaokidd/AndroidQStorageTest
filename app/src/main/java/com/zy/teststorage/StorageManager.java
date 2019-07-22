@@ -4,17 +4,14 @@ import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
-import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.annotation.RequiresApi;
 import android.util.Log;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
+import com.zy.teststorage.helper.StatsHelper;
+import com.zy.teststorage.helper.StorageManagerHelper;
+import com.zy.teststorage.model.AppStorageInfo;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -36,6 +33,8 @@ public class StorageManager {
 
     private StorageManagerHelper helper;
 
+    private StatsHelper statsHelper;
+
     private static class InstanceHolder {
         private final static StorageManager mInstance = new StorageManager();
 
@@ -48,6 +47,7 @@ public class StorageManager {
     private StorageManager() {
         infos = new ArrayList<>();
         helper = new StorageManagerHelper();
+        statsHelper = new StatsHelper();
     }
 
     /**
@@ -57,10 +57,11 @@ public class StorageManager {
         AppStorageInfo appStorageInfo = new AppStorageInfo(context);
         infos.add(appStorageInfo);
         helper.printAppStorageInfo(appStorageInfo);
+        statsHelper.printStorageSpace(appStorageInfo);
     }
 
-    private void d(){
-
+    public void printAvailableSpace(AppStorageInfo storageInfo){
+        statsHelper.printStorageSpace(storageInfo);
     }
 
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)

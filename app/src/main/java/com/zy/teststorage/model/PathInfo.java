@@ -1,4 +1,4 @@
-package com.zy.teststorage;
+package com.zy.teststorage.model;
 
 import android.text.TextUtils;
 
@@ -6,8 +6,8 @@ public class PathInfo {
     private final static String SUFFIX_TEST_FILE = "/suffix_test_file";
 
 
-    String path;
-    String tagName;
+    public String path;
+    public String tagName;
 
     public PathInfo(String tagName, String path) {
         if (!TextUtils.isEmpty(path)) {

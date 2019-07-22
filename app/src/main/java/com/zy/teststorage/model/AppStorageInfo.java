@@ -1,7 +1,9 @@
-package com.zy.teststorage;
+package com.zy.teststorage.model;
 
 import android.content.Context;
 import android.os.Environment;
+
+import com.zy.teststorage.model.PathInfo;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,26 +13,26 @@ import java.util.List;
  * */
 public class AppStorageInfo {
 
-    String appPackageName;
+    public String appPackageName;
 
     //app self path info
-    String internPath;
-    String internCachePath;
-    String externalPath;
-    String externalCachePath;
-    String externalMediaPath;
+    public String internPath;
+    public String internCachePath;
+    public String externalPath;
+    public String externalCachePath;
+    public String externalMediaPath;
 
 
     //device environment path info
-    String envDataPath;
-    String envStoragePublicPath;
-    String envStoragePublicVideoPath;
+    public String envDataPath;
+    public  String envStoragePublicPath;
+    public String envStoragePublicVideoPath;
 
 
-    List<PathInfo> pathInfos;
+    public List<PathInfo> pathInfos;
 
 
-    AppStorageInfo(Context context) {
+    public AppStorageInfo(Context context) {
         pathInfos = new ArrayList<>();
         initPath(context);
     }
