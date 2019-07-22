@@ -15,6 +15,8 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 一.
@@ -27,174 +29,38 @@ import java.io.IOException;
  * AndroidQ :
  * １．应用沙箱：所有的应用都被隔离在单独的空间内。
  */
-public class   StorageManager {
+public class StorageManager {
     private final static String TAG = "StorageManager";
-    private final static String SUFFIX_TEST_FILE = "/suffix_test_file";
 
+    private List<AppStorageInfo> infos;
 
-    private String mExternalStoragePath; //外部共享目录
+    private StorageManagerHelper helper;
 
-    private final static StorageManager mInstance = new StorageManager();
+    private static class InstanceHolder {
+        private final static StorageManager mInstance = new StorageManager();
+
+    }
+
+    public static StorageManager getInstance() {
+        return InstanceHolder.mInstance;
+    }
 
     private StorageManager() {
-        Log.d(TAG,"storagemanager init");
+        infos = new ArrayList<>();
+        helper = new StorageManagerHelper();
     }
 
     /**
-     * 打印storage路径
+     * application context
      */
-    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
-    public void printStoragePath(Context context) {
-        Log.d(TAG, "<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< print storage path start"
-                + context.getPackageName());
-        String internPath = context.getFilesDir().getPath();
-        String internCachePath = context.getCacheDir().getPath();
-        String externalPath = context.getExternalFilesDir("").getPath();
-        String externalCachePath = context.getExternalCacheDir().getPath();
-//        String obbFilePath = context.getObbDir().getPath();
-
-        //environment
-        String envDataDir = Environment.getDataDirectory().getPath();
-        String envStorageDir = Environment.getExternalStorageDirectory().getPath();
-        String envStoragePublicDir = Environment
-                .getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM).getPath();
-
-        String envStorageMoviesDir = Environment
-                .getExternalStoragePublicDirectory(Environment.DIRECTORY_MOVIES).getPath();
-
-        File[] externalMediaFileArray = context.getExternalMediaDirs();
-
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
-            Log.d(TAG, Environment.getExternalStorageState());
-            File[] secondaryFileDirs = context.getExternalFilesDirs(null);
-            for (int i = 0; i < secondaryFileDirs.length; i++) {
-                if (secondaryFileDirs[i] != null) {
-                    String externalPathSecondary = secondaryFileDirs[i].getPath();
-                    printPath("[ExternalFileDirs]", "index:" + i
-                            + " path:" + externalPathSecondary);
-                    checkPathAccessible(externalPathSecondary.concat(SUFFIX_TEST_FILE));
-                } else {
-                    printPath("[ExternalFileDirs]", null);
-                }
-            }
-        }
-        Log.d(TAG, "----------- external public directory-------------------");
-        String externalPublicDirectory = Environment
-                .getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS)
-                .getPath();
-        printPath("externalPublicDirectory", externalPublicDirectory);
-        checkPathAccessible(externalPublicDirectory.concat(SUFFIX_TEST_FILE));
-
-        Log.d(TAG, "----------- external path -------------------");
-        printPath("external file path", externalPath.concat(SUFFIX_TEST_FILE));
-        checkPathAccessible(externalPath.concat(SUFFIX_TEST_FILE));
-
-        Log.d(TAG, "------------ external cache path ------------");
-        printPath("external cache path", externalCachePath.concat(SUFFIX_TEST_FILE));
-        checkPathAccessible(externalCachePath.concat(SUFFIX_TEST_FILE));
-
-        Log.d(TAG, "----------- intern path -------------------");
-        printPath("[InternPath]", internPath.concat(SUFFIX_TEST_FILE));
-        checkPathAccessible(internPath.concat(SUFFIX_TEST_FILE));
-
-        Log.d(TAG, "----------- interna cache path-------------------");
-        printPath("[InternCachePath]", internCachePath.concat(SUFFIX_TEST_FILE));
-        checkPathAccessible(internCachePath.concat(SUFFIX_TEST_FILE));
-
-//        Log.d(TAG, "----------- obb path-------------------");
-//        printPath("[ObbPath]", obbFilePath.concat(SUFFIX_TEST_FILE));
-//        checkPathAccessible(obbFilePath.concat(SUFFIX_TEST_FILE));
-
-        Log.d(TAG, "------------ external media dirs ----------");
-        for (File file : externalMediaFileArray) {
-            if (file != null) {
-                printPath("[ExternalMediaFile]", file.getPath().concat(SUFFIX_TEST_FILE));
-                checkPathAccessible(file.getPath().concat(SUFFIX_TEST_FILE));
-            }
-        }
-
-        Log.d(TAG, "------------- external storage environment directory");
-        printPath("[Env-External-Directory]:", envStorageDir.concat(SUFFIX_TEST_FILE));
-        checkPathAccessible(envStorageDir.concat(SUFFIX_TEST_FILE));
-
-        Log.d(TAG, "-------------- external storage environment public directory");
-        printPath("[Env-External-Pub-Dir]:", envStoragePublicDir.concat(SUFFIX_TEST_FILE));
-        checkPathAccessible(envStoragePublicDir.concat(SUFFIX_TEST_FILE));
-
-        Log.d(TAG, "--------------- external storage environment movie directory");
-        printPath("[Env-External-Movie-Dir]", envStorageMoviesDir.concat(SUFFIX_TEST_FILE));
-        checkPathAccessible(envStorageMoviesDir.concat(SUFFIX_TEST_FILE));
-
-        Log.d(TAG, ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> print storage end."
-                + context.getPackageName());
+    public void printApplicationStoragePathInfo(Context context) {
+        AppStorageInfo appStorageInfo = new AppStorageInfo(context);
+        infos.add(appStorageInfo);
+        helper.printAppStorageInfo(appStorageInfo);
     }
 
-    private void checkPathAccessible(String path) {
-        readFile(path);
-        writeFile(path);
-        readFile(path);
-    }
+    private void d(){
 
-    private static void printPath(String type, String value) {
-        Log.d(TAG, "[" + type + "]:" + value);
-    }
-
-
-    private void writeFile(String filePath) {
-        File file = new File(filePath);
-
-        if (!file.getParentFile().exists()) {
-            Log.d(TAG, "parent path doesn't exits, try to mkdir");
-            file.getParentFile().mkdirs();
-        }
-
-        if (file.exists()) {
-            Log.d(TAG, "file exits, try to delete");
-            boolean result = file.delete();
-            Log.d(TAG, "delete file result :" + result);
-        }
-        boolean result = false;
-        try {
-            result = file.createNewFile();
-        } catch (IOException e) {
-            Log.e(TAG, "create file failed " + e.getMessage());
-            e.printStackTrace();
-        }
-        Log.d(TAG, "create file  result:" + result);
-
-        FileWriter fileWriter = null;
-        try {
-            fileWriter = new FileWriter(new File(filePath));
-            fileWriter.write("test storageManager");
-            fileWriter.flush();
-            fileWriter.close();
-        } catch (FileNotFoundException e) {
-            if (fileWriter != null) {
-                try {
-                    fileWriter.close();
-                } catch (IOException e1) {
-                    e1.printStackTrace();
-                }
-            }
-            Log.e(TAG, "FileNotFoundException");
-            e.printStackTrace();
-        } catch (IOException e) {
-            Log.e(TAG, "IOException");
-            e.printStackTrace();
-        }
-    }
-
-    private void readFile(String filePath) {
-        try {
-            FileReader fileReader = new FileReader(new File(filePath));
-            BufferedReader br = new BufferedReader(fileReader);
-            String firstLine = br.readLine();
-            Log.d(TAG, "[READ_LINE]:" + firstLine);
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
     }
 
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
@@ -219,7 +85,7 @@ public class   StorageManager {
     }
 
 
-    public void printConvertedPath() {
+/*    public void printConvertedPath() {
         File externalPubPath = Environment
                 .getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
         File picPath = new File(externalPubPath, "image");
@@ -239,13 +105,6 @@ public class   StorageManager {
         uri = Uri.fromFile(picPath);
 //        }
         Log.d(TAG, "[Converted-pic-path]:" + uri.getPath());
-    }
+    }*/
 
-    public void printStorageSpace(){
-
-    }
-
-    public static StorageManager getInstance() {
-        return mInstance;
-    }
 }

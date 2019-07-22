@@ -31,7 +31,7 @@ public class MainActivity extends AppCompatActivity {
         super.onResume();
     }
 
-    private void printStorage(){
+/*    private void printStorage(){
         //打印当前应用的路径
         mStorageManager.printStoragePath(this);
 
@@ -49,11 +49,15 @@ public class MainActivity extends AppCompatActivity {
             Toast.makeText(this, "找不到包名", Toast.LENGTH_SHORT).show();
             e.printStackTrace();
         }
-    }
+    }*/
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-//        printStorage();
+        onRequestPermissionComplete();
+    }
+
+    private void onRequestPermissionComplete(){
+        mStorageManager.printApplicationStoragePathInfo(this);
     }
 }
