@@ -1,5 +1,6 @@
 package com.zy.teststorage;
 
+import android.app.Activity;
 import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
@@ -8,6 +9,8 @@ import android.provider.MediaStore;
 import android.support.annotation.RequiresApi;
 import android.util.Log;
 
+import com.zy.teststorage.callback.ICreateFileCallback;
+import com.zy.teststorage.helper.MediaStoreHelper;
 import com.zy.teststorage.helper.StatsHelper;
 import com.zy.teststorage.helper.StorageManagerHelper;
 import com.zy.teststorage.model.AppStorageInfo;
@@ -26,7 +29,7 @@ import java.util.List;
  * AndroidQ :
  * １．应用沙箱：所有的应用都被隔离在单独的空间内。
  */
-public class StorageManager {
+public class StorageManager implements ICreateFileCallback {
     private final static String TAG = "StorageManager";
 
     private List<AppStorageInfo> infos;
@@ -34,6 +37,14 @@ public class StorageManager {
     private StorageManagerHelper helper;
 
     private StatsHelper statsHelper;
+
+    private MediaStoreHelper mediaStoreHelper;
+
+    @Override
+    public void onFileCreate(Uri uri) {
+        String tag = "[CREATE_FILE]: ";
+        Log.d(TAG, tag + uri.toString());
+    }
 
     private static class InstanceHolder {
         private final static StorageManager mInstance = new StorageManager();
@@ -48,19 +59,22 @@ public class StorageManager {
         infos = new ArrayList<>();
         helper = new StorageManagerHelper();
         statsHelper = new StatsHelper();
+        mediaStoreHelper = new MediaStoreHelper();
     }
 
     /**
      * application context
      */
-    public void printApplicationStoragePathInfo(Context context) {
-        AppStorageInfo appStorageInfo = new AppStorageInfo(context);
+    public void printApplicationStoragePathInfo(Activity activity) {
+        AppStorageInfo appStorageInfo = new AppStorageInfo(activity);
         infos.add(appStorageInfo);
         helper.printAppStorageInfo(appStorageInfo);
         statsHelper.printStorageSpace(appStorageInfo);
+//        mediaStoreHelper.launchDocumentPicker(activity);
+        mediaStoreHelper.creatNewDocument(activity, "mivideo/cache", "android-storage");
     }
 
-    public void printAvailableSpace(AppStorageInfo storageInfo){
+    public void printAvailableSpace(AppStorageInfo storageInfo) {
         statsHelper.printStorageSpace(storageInfo);
     }
 
