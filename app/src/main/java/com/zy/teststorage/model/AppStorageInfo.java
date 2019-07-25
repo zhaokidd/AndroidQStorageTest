@@ -25,7 +25,8 @@ public class AppStorageInfo {
 
     //device environment path info
     public String envDataPath;
-    public  String envStoragePublicPath;
+    public String envStorageDirectory;
+    public String envStoragePublicPath;
     public String envStoragePublicVideoPath;
 
 
@@ -48,12 +49,14 @@ public class AppStorageInfo {
         envStoragePublicVideoPath = Environment
                 .getExternalStoragePublicDirectory(Environment.DIRECTORY_MOVIES)
                 .getPath();
+        envStorageDirectory = Environment.getExternalStorageDirectory().getPath();
 
         pathInfos.add(new PathInfo("AppInternPath", internPath));
         pathInfos.add(new PathInfo("AppInternCachePath", internCachePath));
         pathInfos.add(new PathInfo("AppExternalPath", externalPath));
         pathInfos.add(new PathInfo("AppExternalMediaPath", externalMediaPath));
         pathInfos.add(new PathInfo("EnvDataPath", envDataPath));
+        pathInfos.add(new PathInfo("envStorageDirectory", envStorageDirectory));
         pathInfos.add(new PathInfo("envStoragePublicPath", envStoragePublicPath));
         pathInfos.add(new PathInfo("envStoragePublicMoviePath",envStoragePublicVideoPath));
     }

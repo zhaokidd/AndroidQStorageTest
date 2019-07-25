@@ -74,4 +74,9 @@ public class MainActivity extends AppCompatActivity {
     private void onRequestPermissionComplete(){
         mStorageManager.printApplicationStoragePathInfo(this);
     }
+
+    @Override
+    public void grantUriPermission(String toPackage, Uri uri, int modeFlags) {
+        super.grantUriPermission(toPackage, uri, modeFlags);
+    }
 }

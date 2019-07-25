@@ -71,7 +71,9 @@ public class StorageManager implements ICreateFileCallback {
         helper.printAppStorageInfo(appStorageInfo);
         statsHelper.printStorageSpace(appStorageInfo);
 //        mediaStoreHelper.launchDocumentPicker(activity);
-        mediaStoreHelper.creatNewDocument(activity, "mivideo/cache", "android-storage");
+//        mediaStoreHelper.creatNewDocument(activity, "mivideo/cache", "android-storage");
+//        mediaStoreHelper.createFileUsingProvider(activity,
+//                appStorageInfo.envStoragePublicPath.concat("/test.log"));
     }
 
     public void printAvailableSpace(AppStorageInfo storageInfo) {
